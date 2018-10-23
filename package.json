@@ -4,6 +4,7 @@
   "description": "Migrate data from sql database to mongodb",
   "main": "index.js",
   "scripts": {
+    "build": "babel ./src -d ./lib",
     "test": "mocha --reporter spec"
   },
   "repository": {
@@ -17,6 +18,8 @@
   },
   "homepage": "https://github.com/emiliosel/sql-to-mongo#readme",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "chai": "^4.2.0",
     "mocha": "^5.2.0"
   }
