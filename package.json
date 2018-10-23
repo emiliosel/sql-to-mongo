@@ -1,0 +1,23 @@
+{
+  "name": "@emiliosel/sql-to-mongo",
+  "version": "0.1.0",
+  "description": "Migrate data from sql database to mongodb",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emiliosel/sql-to-mongo.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/emiliosel/sql-to-mongo/issues"
+  },
+  "homepage": "https://github.com/emiliosel/sql-to-mongo#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
+  }
+}
