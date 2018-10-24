@@ -5,6 +5,7 @@ import {
   connectMysql
 } from '../src/connectors/mysql';
 
+import { connectMongo } from '../src/connectors/mongo'
 
 describe('mysqlConnector', function () {
   const config = {
@@ -33,6 +34,34 @@ describe('mysqlConnector', function () {
         password: '',
         database: 'newpost_v2db'
       }
+    }).catch(er => {
+      expect(er).to.be.an('error');
+    })
+  });
+});
+
+
+describe('mongoConnector', function () {
+  const config = {
+      host: 'localhost',
+      port: '27017',
+      user: 'root',
+      password: '',
+      database: 'mydb3'
+    }
+  it('should connect to database and return an instance of mongoose', function () {
+    return connectMongo(config).then(mongoose => {
+      expect(mongoose).to.have.a.property('Schema')
+    })
+  });
+
+  it('should not connect and throw error (bad credentials)', function () {
+    return connectMongo({
+        host: 'localhost',
+        port: '8889',
+        user: '',
+        password: '',
+        database: 'newpost_v2db'
     }).catch(er => {
       expect(er).to.be.an('error');
     })

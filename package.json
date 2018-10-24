@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "knex": "^0.15.2",
+    "mongoose": "^5.3.6",
     "mysql": "^2.16.0"
   }
 }
