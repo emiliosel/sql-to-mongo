@@ -1,6 +1,10 @@
-function sayHiTo(name) {
-  return `Hi, ${name}`;
-}
+import {
+  connectMysql
+} from './connectors/mysql';
+
+import { connectMongo } from './connectors/mongo'
+// import { buildSchemaObject, buildMongooseModel } from '../src/helpers/mongoose'
+import { buildSelect } from '../src/helpers/knex'
 
 function migrate(config) {
   const {
@@ -30,12 +34,55 @@ migrate({
     },
   },
 });
-const message = sayHiTo('Bruno');
 
-console.log(message);
+export const buildSchemaObject = (columns) => {
+  let schemaObj = {}
+  for (let columnName in columns) {
+    schemaObj[columnName] = columns[columnName].type ? columns[columnName].type : String
+  }
+  return schemaObj
+}
 
-export default function (config) {
-  return {
-    config,
-  };
+export const buildMongooseModel = (options, mongoose) => {
+  const { fromTable, columns, toCollection } = options
+  let modelName = toCollection || fromTable
+  let modelSchema = new mongoose.Schema(buildSchemaObject(columns), {versionKey: false});
+  let model = mongoose.model(modelName, modelSchema)
+  return model
+}
+
+const getDataFromSql = async (fromTable, columns, knex) => {
+  let selectObj = buildSelect(columns)
+  let data = await knex.select(selectObj).from(fromTable).limit(2)
+  return data
+}
+
+const saveDataToMongo = async (data, mongooseModel) => {
+  return await mongooseModel.insertMany(data)
+}
+
+export default {
+
+  async run(options) {
+    const { fromTable, columns } = options
+    if (!columns) throw new Error('Select columns'); // todo ...
+    let [ knex, mongoose ] = await this.connectToDatabases()
+    let mongooseModel = buildMongooseModel(options, mongoose)
+    let dataFromSql = await getDataFromSql(fromTable, columns, knex)
+    console.log({dataFromSql})
+    let res = await saveDataToMongo(dataFromSql, mongooseModel)
+    return res
+  },
+
+  addKnexConfig(config) {
+    this.knexConfig = config
+  },
+
+  addMongooseConfig(config) {
+    this.mongooseConfig = config
+  },
+
+  connectToDatabases() {
+    return Promise.all([connectMysql(this.knexConfig), connectMongo(this.mongooseConfig)])
+  }
 }

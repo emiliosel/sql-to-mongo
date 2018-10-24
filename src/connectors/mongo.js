@@ -27,7 +27,7 @@ export const connectMongo = (options) => {
     })
 
     db.on('error', (er) => {
-      console.log('Connection mongo error:')
+      console.log('Connection mongo error!')
       rej(er)
     })
   })
