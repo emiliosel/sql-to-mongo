@@ -1,0 +1,19 @@
+mysql:
+  image: mysql:latest
+  container_name: mysql-container
+  ports:
+    - 3306:3306
+  volumes:
+    - ./data/world.sql:/docker-entrypoint-initdb.d/world.sql
+  environment:
+    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_DATABASE: name_db
+    MYSQL_USER: user
+    MYSQL_PASSWORD: password
+mongo:
+  container_name: mongo-container
+  image: mongo
+  volumes:
+    - ./data/mongo:/data/db
+  ports:
+    - "27017:27017"
