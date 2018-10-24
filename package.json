@@ -2,7 +2,7 @@
   "name": "@emiliosel/sql-to-mongo",
   "version": "0.1.0",
   "description": "Migrate data from sql database to mongodb",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "build": "npm run lint && babel ./src -d ./lib",
     "lint": "eslint ./src",
@@ -34,5 +34,9 @@
     "eslint-plugin-import": "^2.14.0",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0"
+  },
+  "dependencies": {
+    "knex": "^0.15.2",
+    "mysql": "^2.16.0"
   }
 }
