@@ -10,6 +10,7 @@ mysql:
     MYSQL_DATABASE: name_db
     MYSQL_USER: user
     MYSQL_PASSWORD: password
+  command: --default-authentication-plugin=mysql_native_password
 mongo:
   container_name: mongo-container
   image: mongo
