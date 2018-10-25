@@ -6,6 +6,8 @@ import { connectMongo } from './connectors/mongo'
 // import { buildSchemaObject, buildMongooseModel } from '../src/helpers/mongoose'
 import { buildSelect } from '../src/helpers/knex'
 
+import Pagination from './helpers/pagination'
+
 function migrate(config) {
   const {
     table,
@@ -61,12 +63,28 @@ const saveDataToMongo = async (data, mongooseModel) => {
   return await mongooseModel.insertMany(data)
 }
 
+async function migrate(options) {
+  const { fromTable, columns } = options
+  if (!columns) throw new Error('Select columns'); // todo ...
+  let [ knex, mongoose ] = await this.connectToDatabases()
+  let mongooseModel = buildMongooseModel(options, mongoose)
+  let dataFromSql = await getDataFromSql(fromTable, columns, knex)
+  console.log({dataFromSql})
+  let res = await saveDataToMongo(dataFromSql, mongooseModel)
+  return res
+}
+
 export default {
 
   async run(options) {
+    
+
+
     const { fromTable, columns } = options
     if (!columns) throw new Error('Select columns'); // todo ...
     let [ knex, mongoose ] = await this.connectToDatabases()
+    let countRes = await knex(fromTable).count('id as count')
+    let totalPages = countRes[0].count
     let mongooseModel = buildMongooseModel(options, mongoose)
     let dataFromSql = await getDataFromSql(fromTable, columns, knex)
     console.log({dataFromSql})
