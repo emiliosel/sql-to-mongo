@@ -19,12 +19,16 @@ const config = {
  */
 export const connectMysql = (options) => {
   return new Promise((res, rej) => {
+    console.log('Connecting to mysql...')
     let sqlClient = knex(options)
     sqlClient.raw('select 1+1 as result')
     .then(() => {
+      console.log('Connected to mysql!')
       res(sqlClient)
     })
     .catch((er) => {
+      console.log('Error connecting to mysql')
+      console.log(er)
       rej(er)
     })
   })

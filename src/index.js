@@ -7,6 +7,8 @@ import { connectMongo } from './connectors/mongo'
 import { buildSelect } from '../src/helpers/knex'
 import Pagination from './helpers/pagination'
 
+import Pagination from './helpers/pagination'
+
 function migrate(config) {
   const {
     table,
@@ -62,6 +64,7 @@ const saveDataToMongo = async (data, mongooseModel) => {
   return await mongooseModel.insertMany(data)
 }
 
+<<<<<<< HEAD
 const countMysqlData = async (table, knex) => {
   let countRes = await knex(table).count('id as count')
   return countRes[0].count
@@ -72,6 +75,15 @@ async function migratePaginated({knex, mongoose, mongooseModel, options, limit, 
   offset = offset || 0
   let selectObj = buildSelect(columns)
   let dataFromSql = await knex.select(selectObj).from(fromTable).limit(limit).offset(offset)
+=======
+async function migrate(options) {
+  const { fromTable, columns } = options
+  if (!columns) throw new Error('Select columns'); // todo ...
+  let [ knex, mongoose ] = await this.connectToDatabases()
+  let mongooseModel = buildMongooseModel(options, mongoose)
+  let dataFromSql = await getDataFromSql(fromTable, columns, knex)
+  console.log({dataFromSql})
+>>>>>>> feature/paginateMigration
   let res = await saveDataToMongo(dataFromSql, mongooseModel)
   return res
 }
@@ -79,9 +91,14 @@ async function migratePaginated({knex, mongoose, mongooseModel, options, limit, 
 export default {
 
   async run(options) {
+    
+
+
     const { fromTable, columns } = options
     if (!columns) throw new Error('Select columns'); // todo ...
     let [ knex, mongoose ] = await this.connectToDatabases()
+    let countRes = await knex(fromTable).count('id as count')
+    let totalPages = countRes[0].count
     let mongooseModel = buildMongooseModel(options, mongoose)
     let dataFromSql = await getDataFromSql(fromTable, columns, knex)
     console.log({dataFromSql})
