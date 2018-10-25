@@ -108,6 +108,7 @@ describe('Migration', function () {
     const options = {
       fromTable: 'articles',
       toCollection: 'post',
+      paginate: 1,
       columns: {
         oldId: {
           type: String,
@@ -124,7 +125,7 @@ describe('Migration', function () {
     Migration.addKnexConfig(knexConfig)
     Migration.addMongooseConfig(monooseConfig)
 
-    return Migration.run(options).then(res => {
+    return Migration.runPaginated(options).then(res => {
       console.log({res})
       expect('ok').to.equal('ok')
     }).catch(() => {
