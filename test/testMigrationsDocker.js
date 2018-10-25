@@ -27,6 +27,7 @@ describe('Migration docker', function () {
     const options = {
       fromTable: 'city',
       toCollection: 'mongoCity',
+      paginate: 1,
       columns: {
         title: {
           type: String,
@@ -48,7 +49,7 @@ describe('Migration docker', function () {
     Migration.addKnexConfig(knexConfig)
     Migration.addMongooseConfig(monooseConfig)
 
-    return Migration.run(options).then(res => {
+    return Migration.runPaginated(options).then(res => {
       console.log({res})
       expect('ok').to.equal('ok')
     }).catch(() => {
