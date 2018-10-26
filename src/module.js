@@ -51,7 +51,7 @@ module.exports = class Migration {
       return cb(this.knex, this.mongoose)
     }
 
-    if (cb instanceof Object) {
+    if (isObject(cb)) {
       this.options = cb
       console.time('MigrationUpTime')
       await this._connectToDatabases()
@@ -73,7 +73,12 @@ module.exports = class Migration {
       await this._connectToDatabases()
       return cb(this.knex, this.mongoose)
     }
+
+    if (isObject(cb)) {
+      this.options = cb
+    }
     console.time('MigrationDownTime')
+    await this._connectToDatabases()
     console.log(`Deleting all from collection: ${this.options.toCollection || this.options.fromTable}`)
     if (!this.mongooseModel) {
       this.mongooseModel = buildMongooseModel(this.options, this.mongoose)
