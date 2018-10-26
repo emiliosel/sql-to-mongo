@@ -52,8 +52,8 @@ module.exports = class Migration {
     }
 
     if (cb instanceof Object) {
-      console.time('MigrationUpTime')
       this.options = cb
+      console.time('MigrationUpTime')
       await this._connectToDatabases()
       await this._createPagination()
       this.mongooseModel = buildMongooseModel(this.options, this.mongoose)

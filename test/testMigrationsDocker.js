@@ -65,8 +65,6 @@ describe('Migration with docker images for mysql', function () {
         mongo: monooseConfig
       })
       migration.up(options).then(() => {
-        console.log('Yeah')
-        console.timeEnd('checkMigration')
         migration.down().then(() => {
           expect('ok').to.equal('ok')
         })
