@@ -90,7 +90,7 @@ module.exports = class Migration {
   }
 
   async _createPagination() {
-    this.totalItems = await countMysqlData(this.options.fromTable, this.knex)
+    this.totalItems = this.options.limit ? this.options.limit : await countMysqlData(this.options.fromTable, this.knex)
     this._consoleLogStart()
     if (this.options.paginate) {
 
