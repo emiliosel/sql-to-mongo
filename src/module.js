@@ -59,6 +59,7 @@ module.exports = class Migration {
       this.mongooseModel = buildMongooseModel(this.options, this.mongoose)
       await this._runMigration()
       console.timeEnd('MigrationUpTime')
+      return this
     }
   }
 
@@ -85,6 +86,7 @@ module.exports = class Migration {
     }
     await this.mongooseModel.deleteMany({})
     console.timeEnd('MigrationDownTime')
+    return this
   }
 
   async _createPagination() {
