@@ -17,7 +17,8 @@ module.exports.buildMongooseModel = (options, mongoose) => {
     delete mongoose.connection.models[modelName] // delete first model if exist
 
   let modelSchema = new mongoose.Schema(buildMongoSchemaObject(columns), {
-    versionKey: false
+    versionKey: false,
+    collection: modelName
   });
   let model = mongoose.model(modelName, modelSchema)
   return model
