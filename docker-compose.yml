@@ -6,17 +6,9 @@ mysql:
   volumes:
     - ./data/world.sql:/docker-entrypoint-initdb.d/world.sql
   environment:
-<<<<<<< HEAD
-    MYSQL_ROOT_PASSWORD: secret
-    MYSQL_DATABASE: name_db
-    MYSQL_USER: user
-    MYSQL_PASSWORD: password
-  command: --default-authentication-plugin=mysql_native_password
-=======
     MYSQL_ROOT_PASSWORD: 'secret'
   command: --default-authentication-plugin=mysql_native_password
- 
->>>>>>> feature/paginateMigration
+
 mongo:
   container_name: mongo-container
   image: mongo

@@ -1,9 +1,12 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose')
 
-// make a connection
-mongoose.connect('mongodb://localhost:27017/tutorialkart');
-
-export const buildQueryString = ({ host, port, user, password, database }) => {
+const buildQueryString = ({
+  host,
+  port,
+  user,
+  password,
+  database
+}) => {
   host = host || 'localhost'
   port = port || '27017'
   password = password || ''
@@ -13,12 +16,14 @@ export const buildQueryString = ({ host, port, user, password, database }) => {
   return `mongodb://${authenticationString}${host}:${port}/${database}`
 }
 
-export const connectMongo = (options) => {
+module.exports = function connectMongo(options) {
   return new Promise((res, rej) => {
     console.log('Connecting to mongo...')
     let queryString = buildQueryString(options);
 
-    mongoose.connect(queryString);
+    mongoose.connect(queryString, {
+      useNewUrlParser: true
+    });
     const db = mongoose.connection
 
     db.once('open', () => {

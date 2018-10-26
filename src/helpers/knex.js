@@ -1,4 +1,4 @@
-export const buildSelect = (columns) => {
+module.exports.buildSelect = (columns) => {
   let select = {}
   for (let columnName in columns) {
     if (!columns[columnName].embed) { // if the column is not from embeded content

@@ -1,6 +1,6 @@
 const knex = require('knex');
 
-const config = {
+const testconfig = {
   client: 'mysql',
   connection: {
     host: 'localhost',
@@ -17,19 +17,19 @@ const config = {
  *
  * @param {*} options
  */
-export const connectMysql = (options) => {
+module.exports = function connectMysql(options) {
   return new Promise((res, rej) => {
     console.log('Connecting to mysql...')
     let sqlClient = knex(options)
     sqlClient.raw('select 1+1 as result')
-    .then(() => {
-      console.log('Connected to mysql!')
-      res(sqlClient)
-    })
-    .catch((er) => {
-      console.log('Error connecting to mysql')
-      console.log(er)
-      rej(er)
-    })
+      .then(() => {
+        console.log('Connected to mysql!')
+        res(sqlClient)
+      })
+      .catch((er) => {
+        console.log('Error connecting to mysql')
+        console.log(er)
+        rej(er)
+      })
   })
 }
