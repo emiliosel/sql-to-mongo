@@ -28,9 +28,9 @@ module.exports.buildMongooseModel = (options, mongoose) => {
     }
   }
 
-  modelSchema.post('validate', function(doc, next) {
+  modelSchema.post('validate', async function(doc) {
     for (let callaback of callbacks) {
-      callaback(doc, mongoose, next)
+      await callaback(doc, mongoose)
     }
   })
 

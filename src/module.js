@@ -59,7 +59,7 @@ module.exports = class Migration {
       this.mongooseModel = buildMongooseModel(this.options, this.mongoose)
       await this._runMigration()
       console.timeEnd('MigrationUpTime')
-      return this
+      // return this
     }
   }
 
@@ -81,12 +81,12 @@ module.exports = class Migration {
     console.time('MigrationDownTime')
     await this._connectToDatabases()
     console.log(`Deleting all from collection: ${this.options.toCollection || this.options.fromTable}`)
-    if (!this.mongooseModel) {
+    // if (!this.mongooseModel) {
       this.mongooseModel = buildMongooseModel(this.options, this.mongoose)
-    }
+    // }
     await this.mongooseModel.deleteMany({})
     console.timeEnd('MigrationDownTime')
-    return this
+    // return this
   }
 
   async _createPagination() {
