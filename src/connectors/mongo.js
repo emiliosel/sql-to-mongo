@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const consoleColor = require('../helpers/consoleColor')
 
 const buildQueryString = ({
   host,
@@ -18,7 +19,7 @@ const buildQueryString = ({
 
 module.exports = function connectMongo(options) {
   return new Promise((res, rej) => {
-    console.log('Connecting to mongo...')
+    console.log(consoleColor('yellow'), 'Connecting to mongo...', consoleColor('white'))
     let queryString = buildQueryString(options);
 
     mongoose.connect(queryString, {
@@ -27,12 +28,12 @@ module.exports = function connectMongo(options) {
     const db = mongoose.connection
 
     db.once('open', () => {
-      console.log("Connection to mongo Successful!");
+      console.log(consoleColor('green'), "Connected to mongo Successfully!", consoleColor('white'));
       res(mongoose)
     })
 
     db.on('error', (er) => {
-      console.log('Connection mongo error!')
+      console.log(consoleColor('red'), 'Connection to mongo error!', consoleColor('white'))
       rej(er)
     })
   })

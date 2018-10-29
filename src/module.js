@@ -2,6 +2,7 @@
 const connectMysql = require('./connectors/mysql')
 const connectMongo = require('./connectors/mongo')
 const Pagination = require('./helpers/pagination')
+const consoleColor = require('./helpers/consoleColor')
 const {
   buildMongooseModel
 } = require('./helpers/mongoose')
@@ -53,20 +54,23 @@ module.exports = class Migration {
 
     if (isObject(cb)) {
       this.options = cb
+
       console.time('MigrationUpTime')
       await this._connectToDatabases()
       await this._createPagination()
       this.mongooseModel = buildMongooseModel(this.options, this.mongoose)
       await this._runMigration()
+      console.log(consoleColor('green'))
       console.timeEnd('MigrationUpTime')
+      console.log(consoleColor('white'))
       // return this
     }
   }
 
   _consoleLogStart() {
-    console.log(`Migrating data from table: ${this.options.fromTable}`)
+    console.log(consoleColor('magenta'), `Migrating data from table: ${this.options.fromTable}`)
     console.log(`To collection: ${this.options.toCollection || this.options.fromTable}`)
-    console.log(`Total items to migrate: ${this.totalItems}`)
+    console.log(`Total items to migrate: ${this.totalItems}`, consoleColor('white'))
   }
 
   async down(cb) {
@@ -85,7 +89,9 @@ module.exports = class Migration {
       this.mongooseModel = buildMongooseModel(this.options, this.mongoose)
     // }
     await this.mongooseModel.deleteMany({})
+    console.log(consoleColor('green'))
     console.timeEnd('MigrationDownTime')
+    console.log(consoleColor('white'))
     // return this
   }
 
@@ -114,7 +120,9 @@ module.exports = class Migration {
     if (this.pagination) {
       // let paginatedRuns = []
       while (this.pagination.countDownTotalPages > 0) {
+        console.log(consoleColor('cyan'))
         console.log(`Running paginated: ${this.pagination.currentPage}/${this.pagination.totalPages}`)
+        console.log(consoleColor('white'))
         // paginatedRuns.push(this._run())
         await this._run()
         this.pagination.currentPage += 1 // change pagination current page to +1
