@@ -53,17 +53,21 @@ module.exports = class Migration {
     }
 
     if (isObject(cb)) {
-      this.options = cb
+
+      let self = new Migration({sql: this.sqlCredentials, mongo: this.mongoCredentials})
+      self.knex = this.knex
+      self.mongoose = this.mongoose
+      self.options = cb
 
       console.time('MigrationUpTime')
-      await this._connectToDatabases()
-      await this._createPagination()
-      this.mongooseModel = buildMongooseModel(this.options, this.mongoose)
-      await this._runMigration()
+      await self._connectToDatabases()
+      await self._createPagination()
+      self.mongooseModel = buildMongooseModel(self.options, self.mongoose)
+      await self._runMigration()
       console.log(consoleColor('green'))
       console.timeEnd('MigrationUpTime')
       console.log(consoleColor('white'))
-      // return this
+      return self
     }
   }
 
@@ -80,19 +84,23 @@ module.exports = class Migration {
     }
 
     if (isObject(cb)) {
-      this.options = cb
+      let self = new Migration({sql: this.sqlCredentials, mongo: this.mongoCredentials})
+      self.knex = this.knex
+      self.mongoose = this.mongoose
+      self.options = cb
+
+      console.time('MigrationDownTime')
+      await self._connectToDatabases()
+      console.log(`Deleting all from collection: ${self.options.toCollection || self.options.fromTable}`)
+      // if (!this.mongooseModel) {
+        self.mongooseModel = buildMongooseModel(self.options, self.mongoose)
+      // }
+      await self.mongooseModel.deleteMany({})
+      console.log(consoleColor('green'))
+      console.timeEnd('MigrationDownTime')
+      console.log(consoleColor('white'))
+      return self
     }
-    console.time('MigrationDownTime')
-    await this._connectToDatabases()
-    console.log(`Deleting all from collection: ${this.options.toCollection || this.options.fromTable}`)
-    // if (!this.mongooseModel) {
-      this.mongooseModel = buildMongooseModel(this.options, this.mongoose)
-    // }
-    await this.mongooseModel.deleteMany({})
-    console.log(consoleColor('green'))
-    console.timeEnd('MigrationDownTime')
-    console.log(consoleColor('white'))
-    // return this
   }
 
   async _createPagination() {
