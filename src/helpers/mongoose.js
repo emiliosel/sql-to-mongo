@@ -20,13 +20,21 @@ module.exports.buildMongooseModel = (options, mongoose) => {
     versionKey: false,
     collection: modelName
   });
-  let model = mongoose.model(modelName, modelSchema)
+
+  let callbacks = [] // add the callbacks for beforeSave
   for (columnName in columns) {
-    if (columns[columnName].beforeSave) {
-      modelSchema.post('validate', function(doc, next) {
-        columns[columnName].beforeSave(doc, mongoose, next)
-      })
+    if (columns[columnName].beforeSave instanceof Function) {
+      callbacks.push(columns[columnName].beforeSave)
     }
   }
+
+  modelSchema.post('validate', function(doc, next) {
+    for (let callaback of callbacks) {
+      callaback(doc, mongoose, next)
+    }
+  })
+
+  let model = mongoose.model(modelName, modelSchema)
+
   return model
 }

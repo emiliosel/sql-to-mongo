@@ -112,12 +112,15 @@ module.exports = class Migration {
 
   async _runPaginated() {
     if (this.pagination) {
+      // let paginatedRuns = []
       while (this.pagination.countDownTotalPages > 0) {
         console.log(`Running paginated: ${this.pagination.currentPage}/${this.pagination.totalPages}`)
+        // paginatedRuns.push(this._run())
         await this._run()
         this.pagination.currentPage += 1 // change pagination current page to +1
         this.pagination.countDownTotalPages -= 1 // count down total pages
       }
+      // await Promise.all(paginatedRuns)
     }
   }
 
