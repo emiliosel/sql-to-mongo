@@ -21,5 +21,12 @@ module.exports.buildMongooseModel = (options, mongoose) => {
     collection: modelName
   });
   let model = mongoose.model(modelName, modelSchema)
+  for (columnName in columns) {
+    if (columns[columnName].beforeSave) {
+      modelSchema.post('validate', function(doc, next) {
+        columns[columnName].beforeSave(doc, mongoose, next)
+      })
+    }
+  }
   return model
 }
