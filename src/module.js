@@ -45,16 +45,17 @@ module.exports = class Migration {
   }
 
   async up(cb) {
-    validateMigrationOptions(cb)
 
     if (cb instanceof Function) {
       await this._connectToDatabases()
       return cb(this.knex, this.mongoose)
     }
 
+    validateMigrationOptions(cb)
+
     if (isObject(cb)) {
 
-      let self = new Migration({sql: this.sqlCredentials, mongo: this.mongoCredentials})
+      let self = new Migration({sql: this.sqlCredentials || cb.sql, mongo: this.mongoCredentials || cb.mongo})
       self.knex = this.knex
       self.mongoose = this.mongoose
       self.options = cb
