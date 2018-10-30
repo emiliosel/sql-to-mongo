@@ -6,7 +6,7 @@ const buildMongoSchemaObject = (columns) => {
   return schemaObj
 }
 
-module.exports.buildMongooseModel = (options, mongoose) => {
+module.exports.buildMongooseModel = (options, mongoose, knex) => {
   const {
     fromTable,
     columns,
@@ -30,7 +30,7 @@ module.exports.buildMongooseModel = (options, mongoose) => {
 
   modelSchema.post('validate', async function(doc) {
     for (let callaback of callbacks) {
-      await callaback(doc, mongoose)
+      await callaback(doc, mongoose, knex)
     }
   })
 
