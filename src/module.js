@@ -58,14 +58,14 @@ module.exports = class Migration {
       self.knex = this.knex
       self.mongoose = this.mongoose
       self.options = cb
+      let start = new Date().getTime()
 
-      console.time('MigrationUpTime')
       await self._connectToDatabases()
       await self._createPagination()
       self.mongooseModel = buildMongooseModel(self.options, self.mongoose)
       await self._runMigration()
       console.log(consoleColor('green'))
-      console.timeEnd('MigrationUpTime')
+      console.log(`MigrationUpTime for collection ${self.options.toCollection || self.options.fromTable}:`, new Date().getTime() - start)
       console.log(consoleColor('white'))
       return self
     }
@@ -89,6 +89,8 @@ module.exports = class Migration {
       self.mongoose = this.mongoose
       self.options = cb
 
+      let start = new Date().getTime()
+
       console.time('MigrationDownTime')
       await self._connectToDatabases()
       console.log(`Deleting all from collection: ${self.options.toCollection || self.options.fromTable}`)
@@ -97,7 +99,7 @@ module.exports = class Migration {
       // }
       await self.mongooseModel.deleteMany({})
       console.log(consoleColor('green'))
-      console.timeEnd('MigrationDownTime')
+      console.log(`MigrationDownTime for collection ${self.options.toCollection || self.options.fromTable}:`, new Date().getTime() - start)
       console.log(consoleColor('white'))
       return self
     }
@@ -129,7 +131,7 @@ module.exports = class Migration {
       // let paginatedRuns = []
       while (this.pagination.countDownTotalPages > 0) {
         console.log(consoleColor('cyan'))
-        console.log(`Running paginated: ${this.pagination.currentPage}/${this.pagination.totalPages}`)
+        console.log(`Running paginated for collection ${this.options.toCollection || this.options.fromTable}: ${this.pagination.currentPage}/${this.pagination.totalPages}`)
         console.log(consoleColor('white'))
         // paginatedRuns.push(this._run())
         await this._run()

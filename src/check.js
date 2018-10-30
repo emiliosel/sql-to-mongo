@@ -1,6 +1,8 @@
 const Migration = require('./module')
 // const Migration = require('./module')
+// const Migration = require('@emiliosel/sql-to-mongo')
 const mongoose = require('mongoose')
+// process.env.TZ = 'Europe/Grinuits'
 const sql = {
     client: 'mysql',
     connection: {
@@ -18,45 +20,9 @@ const mongo = {
     database: 'maritime_cms'
 }
 
-const tagsOptions = {
-  fromTable: 'tags',
-  toCollection: 'tags',
-  paginate: 1000,
-  limit: 1000,
-  columns: {
-      oldId: {
-          type: String,
-          from: 'id'
-      },
-      lang: {
-          type: {
-              type: String,
-              default: 'en'
-          },
-          custom: true
-      },
-      tagId: {
-          type: {
-            type: mongoose.Types.ObjectId
-          },
-          custom: true,
-          beforeSave: async (doc, mongoose) => {
-            doc['tagId'] = doc._id
-          }
-      },
-      name: {
-          type: String,
-          from: 'title'
-      },
-      timestamp: {
-        type: String
-      }
-  }
-}
-
-const categoriesOptions = {
-    fromTable: 'categories',
-    toCollection: 'category',
+const authorOptions = {
+    fromTable: 'authors',
+    toCollection: 'author',
     paginate: 1000,
     limit: 1000,
     columns: {
@@ -67,7 +33,71 @@ const categoriesOptions = {
         lang: {
             type: {
                 type: String,
-                default: 'en'
+                default: 'el'
+            },
+            custom: true
+        },
+        authorId: {
+            type: {
+                type: mongoose.Types.ObjectId,
+                default: mongoose.Types.ObjectId()
+            },
+            custom: true,
+            beforeSave: async (doc, mongoose) => {
+                doc['authorId'] = doc._id
+            }
+        },
+        name: {
+            type: String,
+            from: 'title'
+        },
+        slug: {
+            type: String
+        },
+        caption: {
+            type: String,
+            from: 'title_by'
+        },
+        twitter: {
+            type: String
+        },
+        facebook: {
+            type: String
+        },
+        email: {
+            type: String
+        },
+        linkedin: {
+            type: String
+        },
+        created: {
+            type: Date,
+            from: 'timestamp'
+        },
+        lastUpdated: {
+            type: Date,
+            from: 'timestamp_edit'
+        },
+        voices: {
+            type: Boolean
+        }
+    }
+}
+
+const categoriesOptions = {
+    fromTable: 'categories',
+    toCollection: 'category',
+    paginate: 1000,
+    limit: 1000, // for testing
+    columns: {
+        oldId: {
+            type: String,
+            from: 'id'
+        },
+        lang: {
+            type: {
+                type: String,
+                default: 'el'
             },
             custom: true
         },
@@ -104,7 +134,7 @@ const options = {
         lang: {
             type: {
                 type: String,
-                default: 'en'
+                default: 'el'
             },
             custom: true
         },
@@ -124,9 +154,17 @@ const options = {
             beforeSave: async (doc, mongoose) => {
                 let categoriesModel = mongoose.connection.models['category']
                 let category = await categoriesModel.findOne({oldId: doc.category_id})
-                doc['categories'] = [category._id]
-                delete category
-                delete categoriesModel
+                if (category) doc['categories'] = [category._id]
+
+            }
+        },
+        authors: {
+            type: [String],
+            custom: true,
+            beforeSave: async (doc, mongoose) => {
+                let authorModel = mongoose.connection.models['author']
+                let author = await authorModel.findOne({oldId: doc.author_id})
+                if (author) doc['authors'] = [author._id]
             }
         },
         category_id: {
@@ -270,50 +308,38 @@ let migration = new Migration({
     mongo
 })
 
-// console.log({mig: migration.down(categoriesOptions).then()})
-
-// migration.down(categoriesOptions)
-// .then((migrationObj) => {
-//     console.log({migrationObj})
-//     // migrationObj = await migrationObj.up()
-//     return migrationObj
-// })
-// .up()
-// .then((migrationObj) => {
-//     migrationObj =  await migrationObj.down(options)
-//     return migrationObj
-// })
-// // .down(options)
-// .then((migrationObj) => {
-//      migrationObj = await migrationObj.up()
-//     return migrationObj
-// })
-// // .up()
-// .then(() => {
-//     console.log('!!DONE ALL!!')
-// })
-
-// migration.down(categoriesOptions).then(() => {
-//     migration.up(categoriesOptions).then(() => {
-//         console.log('!!DONE!!')
-//     })
-// })
-
-// migration.down(options).then(() => {
-//     migration.up(options).then(() => {
-//         console.log('!!DONE!!')
-//     })
-// })
-
 async function runMigrations() {
-    await migration.down(categoriesOptions)
-    await migration.down(tagsOptions)
-    migration.up(categoriesOptions)
-    migration.up(tagsOptions)
-    // await migration.down(options)
-    // await migration.up(options)
+  console.time('runMigrations')
+  await migration.down(authorOptions)
+  await migration.up(authorOptions)
+  await migration.down(categoriesOptions)
+  await migration.up(categoriesOptions)
+  await migration.down(options)
+  await migration.up(options)
+  console.timeEnd('runMigrations')
+}
+
+async function runMigrationsConcurrently() {
+  console.time('runMigrationsConcurrently')
+    await Promise.all([
+      migration.down(authorOptions),
+      migration.down(categoriesOptions),
+      migration.down(options)
+    ])
+
+    await Promise.all([
+      migration.up(authorOptions),
+      migration.up(categoriesOptions),
+    ])
+
+    await migration.up(options)
+  console.timeEnd('runMigrationsConcurrently')
 }
 
 runMigrations().then(() => {
     console.log('!!DONE!!')
+
+    runMigrationsConcurrently().then(() => {
+      console.log('!!DONE Concurrently!!')
+    })
 })
