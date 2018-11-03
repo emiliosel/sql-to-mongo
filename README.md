@@ -50,12 +50,11 @@ A simple node.js module that Migrate data from sql database to mongo
         },
         countryCode: {                            // 'beforeSave' callback is called at mongoose
           type: String,                           // middleware post('validate') 
-          from: 'CountryCode',
-          beforeSave: async (doc, mongoose, knex) => { 
-
-            doc.name = doc.name.toLowerCase()     // 'doc' is the current document that passed mongoose
+          from: 'CountryCode',                    // 'doc' is the current document that passed mongoose
                                                   // validation and is about to save
                                                   // we can change or format the properties of doc
+          beforeSave: async (doc, mongoose, knex) => { 
+            doc.countryCode = doc.countryCode.toLowerCase()
           }
         },
         Population: {                             // here is not provided 'from' so the name of the
