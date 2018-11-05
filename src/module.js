@@ -59,9 +59,9 @@ module.exports = class Migration {
 
       await this._connectToDatabases()
       await this._createPagination()
-      if (!this.mongooseModel) {
+      // if (!this.mongooseModel) {
         this.mongooseModel = buildMongooseModel(this.options, this.mongoose, this.knex)
-      }
+      // }
       await this._runMigration()
       console.log(consoleColor('green'))
       console.log(`MigrationUpTime for collection ${this.options.toCollection || this.options.fromTable}:`, new Date().getTime() - start)
@@ -90,9 +90,9 @@ module.exports = class Migration {
       console.time('MigrationDownTime')
       await this._connectToDatabases()
       console.log(`Deleting all from collection: ${this.options.toCollection || this.options.fromTable}`)
-      if (!this.mongooseModel) {
+      // if (!this.mongooseModel) {
         this.mongooseModel = buildMongooseModel(this.options, this.mongoose, this.knex)
-      }
+      // }
       await this.mongooseModel.deleteMany({})
       console.log(consoleColor('green'))
       console.log(`MigrationDownTime for collection ${this.options.toCollection || this.options.fromTable}:`, new Date().getTime() - start)
