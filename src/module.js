@@ -54,21 +54,19 @@ module.exports = class Migration {
     validateMigrationOptions(cb)
 
     if (isObject(cb)) {
-
-      let self = new Migration({sql: this.sqlCredentials || cb.sql, mongo: this.mongoCredentials || cb.mongo})
-      self.knex = this.knex
-      self.mongoose = this.mongoose
-      self.options = cb
+      this.options = cb
       let start = new Date().getTime()
 
-      await self._connectToDatabases()
-      await self._createPagination()
-      self.mongooseModel = buildMongooseModel(self.options, self.mongoose, self.knex)
-      await self._runMigration()
+      await this._connectToDatabases()
+      await this._createPagination()
+      if (!this.mongooseModel) {
+        this.mongooseModel = buildMongooseModel(this.options, this.mongoose, this.knex)
+      }
+      await this._runMigration()
       console.log(consoleColor('green'))
-      console.log(`MigrationUpTime for collection ${self.options.toCollection || self.options.fromTable}:`, new Date().getTime() - start)
+      console.log(`MigrationUpTime for collection ${this.options.toCollection || this.options.fromTable}:`, new Date().getTime() - start)
       console.log(consoleColor('white'))
-      return self
+      // return self
     }
   }
 
@@ -85,24 +83,21 @@ module.exports = class Migration {
     }
 
     if (isObject(cb)) {
-      let self = new Migration({sql: this.sqlCredentials, mongo: this.mongoCredentials})
-      self.knex = this.knex
-      self.mongoose = this.mongoose
-      self.options = cb
+      this.options = cb
 
       let start = new Date().getTime()
 
       console.time('MigrationDownTime')
-      await self._connectToDatabases()
-      console.log(`Deleting all from collection: ${self.options.toCollection || self.options.fromTable}`)
-      // if (!this.mongooseModel) {
-        self.mongooseModel = buildMongooseModel(self.options, self.mongoose, self.knex)
-      // }
-      await self.mongooseModel.deleteMany({})
+      await this._connectToDatabases()
+      console.log(`Deleting all from collection: ${this.options.toCollection || this.options.fromTable}`)
+      if (!this.mongooseModel) {
+        this.mongooseModel = buildMongooseModel(this.options, this.mongoose, this.knex)
+      }
+      await this.mongooseModel.deleteMany({})
       console.log(consoleColor('green'))
-      console.log(`MigrationDownTime for collection ${self.options.toCollection || self.options.fromTable}:`, new Date().getTime() - start)
+      console.log(`MigrationDownTime for collection ${this.options.toCollection || this.options.fromTable}:`, new Date().getTime() - start)
       console.log(consoleColor('white'))
-      return self
+      // return self
     }
   }
 
