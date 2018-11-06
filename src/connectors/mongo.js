@@ -32,7 +32,7 @@ module.exports = function connectMongo(options) {
     mongoose.connect(queryString, {
       useNewUrlParser: true,
       useCreateIndex: true,
-      poolSize: 15
+      poolSize: 20
     });
     const db = mongoose.connection
 
