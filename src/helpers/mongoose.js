@@ -29,9 +29,11 @@ module.exports.buildMongooseModel = (options, mongoose, knex) => {
   }
 
   modelSchema.post('validate', async function(doc) {
-    for (let callaback of callbacks) {
-      await callaback(doc, mongoose, knex)
-    }
+    // for (let callaback of callbacks) {
+    //   await callaback(doc, mongoose, knex)
+    // }
+
+    await Promise.all(callbacks.map(callback => { return callback(doc, mongoose, knex) }))
   })
 
   let model = mongoose.model(modelName, modelSchema)
