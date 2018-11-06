@@ -30,7 +30,9 @@ module.exports = function connectMongo(options) {
     }
 
     mongoose.connect(queryString, {
-      useNewUrlParser: true
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      poolSize: 15
     });
     const db = mongoose.connection
 
