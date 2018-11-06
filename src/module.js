@@ -14,7 +14,7 @@ const {
 } = require('util')
 
 const countMysqlData = async (table, knex) => {
-  let countRes = await knex(table).count('id as count')
+  let countRes = await knex(table).count('* as count')
   return countRes[0].count
 }
 
@@ -151,7 +151,7 @@ module.exports = class Migration {
   }
 
   async _connectToDatabases() {
-    if (!this.knex || !this.mongoose) {
+    if (!this.knex || !this.mongoose || this.mongoose.connection.readyState != 1) {
       console.log('Connecting to databases!!!')
       let [knex, mongoose] = await Promise.all([connectMysql(this.sqlCredentials), connectMongo(this.mongoCredentials)])
       this.knex = knex
