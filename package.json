@@ -1,6 +1,6 @@
 {
   "name": "@emiliosel/sql-to-mongo",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Migrate data from sql database to mongodb",
   "main": "src/module.js",
   "scripts": {
