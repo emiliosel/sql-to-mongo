@@ -28,12 +28,12 @@ module.exports = function connectMongo(options) {
       console.log(consoleColor('green'), "Connected to mongo Successfully!", consoleColor('white'));
       return res(mongoose)
     }
-
-    mongoose.connect(queryString, {
+    let opt = options.options ? options.options : {
       useNewUrlParser: true,
       useCreateIndex: true,
       poolSize: 20
-    });
+    }
+    mongoose.connect(queryString, opt);
     const db = mongoose.connection
 
     db.once('open', () => {
