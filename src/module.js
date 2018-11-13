@@ -23,7 +23,7 @@ const validateConstructOptions = (options) => {
     sql,
     mongo
   } = options
-  if (!sql || !mongo) throw new Error('You must specify sql and mongo credentials to proceed')
+  if (!sql && !mongo) throw new Error('You must specify sql or mongo credentials.')
   return true
 }
 
@@ -153,9 +153,10 @@ module.exports = class Migration {
   async _connectToDatabases() {
     if (!this.knex || !this.mongoose || this.mongoose.connection.readyState != 1) {
       console.log('Connecting to databases!!!')
-      let [knex, mongoose] = await Promise.all([connectMysql(this.sqlCredentials), connectMongo(this.mongoCredentials)])
-      this.knex = knex
-      this.mongoose = mongoose
+      if (this.sqlCredentials)
+        this.knex = await connectMysql(this.sqlCredentials)
+      if (this.mongoCredentials)
+        this.mongoose = await connectMosngo(this.mongoCredentials)
     }
   }
 }
