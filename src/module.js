@@ -156,7 +156,7 @@ module.exports = class Migration {
       if (this.sqlCredentials)
         this.knex = await connectMysql(this.sqlCredentials)
       if (this.mongoCredentials)
-        this.mongoose = await connectMosngo(this.mongoCredentials)
+        this.mongoose = await connectMongo(this.mongoCredentials)
     }
   }
 }
