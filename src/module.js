@@ -142,7 +142,14 @@ module.exports = class Migration {
     let selectObj = buildSelect(this.options.columns)
     let dataFromSql
     if (this.pagination) {
-      dataFromSql = await this.knex.select(selectObj).from(this.options.fromTable).limit(this.pagination.itemsPerPage).offset(this.pagination.getSkip())
+      if (this.pagination.lastItem && this.options.paginateThrough && this.options.paginateThrough.sqlId ) {
+        let sqlId = this.options.paginateThrough.sqlId
+        let mongoId = this.options.paginateThrough.as ? this.options.paginateThrough.as : this.options.paginateThrough.sqlId
+        dataFromSql = await this.knex.select(selectObj).from(this.options.fromTable).where(sqlId, '>', this.pagination.lastItem[mongoId]).limit(this.pagination.itemsPerPage)
+      } else {
+        dataFromSql = await this.knex.select(selectObj).from(this.options.fromTable).limit(this.pagination.itemsPerPage).offset(this.pagination.getSkip())
+      }
+      this.pagination['lastItem'] = Array.isArray(dataFromSql) ? dataFromSql[dataFromSql.length - 1] : undefined
     } else {
       dataFromSql = await this.knex.select(selectObj).from(this.options.fromTable)
     }
